@@ -1,12 +1,3 @@
-"""
-menu.py
--------
-Interfaz de consola. Equivale a MostrarMenu + los procedimientos de cada
-opcion del Pascal original, pero aca SOLO se encarga de mostrar texto y
-pedir datos: toda la logica real vive en GestorPedidos (separacion de
-responsabilidades).
-"""
-
 from entrada_salida import (
     leer_entero,
     leer_real,
@@ -21,8 +12,6 @@ from modelos import PedidoDelivery
 
 
 class MenuRoticeria:
-    """Ciclo principal del sistema de pedidos."""
-
     def __init__(self, archivo_datos='pedidos.json'):
         self._archivo_datos = archivo_datos
         self._gestor = GestorPedidos(repositorio=self._crear_repositorio())
@@ -32,7 +21,6 @@ class MenuRoticeria:
         return RepositorioJSON(self._archivo_datos)
 
     def _recargar_datos(self):
-        """Relee el JSON, igual que el Pascal hacia CargarDesdeDisco antes de operar."""
         self._gestor = GestorPedidos(repositorio=self._crear_repositorio())
 
     def mostrar_menu(self):

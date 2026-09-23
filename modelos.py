@@ -1,28 +1,8 @@
-"""
-modelos.py
-----------
-Define las clases del dominio de la roticeria.
-
-Pilares de POO presentes en este archivo:
-  - ABSTRACCION : 'Pedido' es una clase abstracta (ABC) que define QUE debe
-                  hacer todo pedido, sin importar COMO lo hace cada tipo.
-  - HERENCIA    : PedidoDelivery y PedidoRetiro heredan de Pedido.
-  - POLIMORFISMO: cada subclase implementa 'calcular_costo_envio' y
-                  'mostrar_resumen' a su manera. El resto del programa
-                  llama siempre a pedido.mostrar_resumen() sin saber
-                  (ni le importa) de que subclase es el objeto.
-  - ENCAPSULAMIENTO: los atributos son privados (prefijo '_') y se
-                  accede/modifica a traves de propiedades (@property)
-                  que validan los datos, igual que hacia LeerReal() o
-                  las validaciones de string vacio en el Pascal original.
-"""
-
 from abc import ABC, abstractmethod
 from datetime import datetime
 
 
 class Pedido(ABC):
-    """Representa un pedido generico de la roticeria (clase abstracta)."""
 
     ESTADOS_VALIDOS = ('Pendiente', 'Entregado', 'Cancelado')
 
@@ -98,7 +78,6 @@ class Pedido(ABC):
         return self._fecha_creacion
 
     def cancelar(self):
-        """Baja logica: igual que en el Pascal original, no se borra, se marca."""
         self._cancelado = True
         self._estado = 'Cancelado'
 
@@ -108,22 +87,17 @@ class Pedido(ABC):
     # ---------------- Abstraccion: contrato que cada subclase debe cumplir ----------------
     @abstractmethod
     def calcular_costo_envio(self):
-        """Cada tipo de pedido calcula su costo de envio de forma distinta."""
         raise NotImplementedError
 
     @abstractmethod
     def obtener_tipo(self):
-        """Devuelve una etiqueta legible del tipo de pedido."""
         raise NotImplementedError
 
     # ---------------- Polimorfismo ----------------
     def calcular_total_final(self):
-        """Metodo comun a todos los pedidos, pero que depende del costo de
-        envio, el cual varia segun la subclase (polimorfismo por composicion)."""
         return round(self.total + self.calcular_costo_envio(), 2)
 
     def mostrar_resumen(self):
-        """Implementacion por defecto; las subclases la extienden con super()."""
         return (
             f'ID: {self.id:<4} | Tipo: {self.obtener_tipo():<16} | '
             f'Cliente: {self.cliente:<20} | Total: ${self.calcular_total_final():>8.2f} '
@@ -131,7 +105,6 @@ class Pedido(ABC):
         )
 
     def to_dict(self):
-        """Serializa el pedido a un diccionario, listo para volcar a JSON."""
         return {
             'tipo': self.obtener_tipo_clave(),
             'id': self._id,
@@ -144,7 +117,6 @@ class Pedido(ABC):
         }
 
     def obtener_tipo_clave(self):
-        """Clave interna estable usada solo para (de)serializar el JSON."""
         return type(self).__name__
 
     def __str__(self):
@@ -152,7 +124,6 @@ class Pedido(ABC):
 
 
 class PedidoDelivery(Pedido):
-    """Pedido que se entrega a domicilio: tiene direccion y costo de envio."""
 
     COSTO_ENVIO_BASE = 500.0
 
@@ -188,7 +159,6 @@ class PedidoDelivery(Pedido):
 
 
 class PedidoRetiro(Pedido):
-    """Pedido que el cliente retira en el local: sin direccion ni envio."""
 
     def calcular_costo_envio(self):
         return 0.0

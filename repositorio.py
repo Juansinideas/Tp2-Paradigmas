@@ -1,19 +1,3 @@
-"""
-repositorio.py
----------------
-Capa de persistencia. Reemplaza a 'GuardarEnDisco' / 'CargarDesdeDisco' del
-Pascal original, pero usando JSON en lugar de un 'file of TPedido' binario.
-
-Pilares de POO:
-  - ABSTRACCION : 'RepositorioPedidos' define el contrato (guardar/cargar)
-                  sin decir como se implementa. El resto del sistema
-                  depende de esta interfaz, no de JSON en particular.
-  - HERENCIA    : 'RepositorioJSON' extiende 'RepositorioPedidos'.
-                  Si mañana se quisiera guardar en otro formato (por
-                  ejemplo una base SQLite), alcanzaria con crear otra
-                  subclase sin tocar el resto del programa.
-"""
-
 import json
 import os
 from abc import ABC, abstractmethod
@@ -22,7 +6,6 @@ from modelos import PedidoDelivery, PedidoRetiro
 
 
 class RepositorioPedidos(ABC):
-    """Interfaz abstracta para la persistencia de pedidos."""
 
     @abstractmethod
     def guardar_todos(self, pedidos):
@@ -34,7 +17,6 @@ class RepositorioPedidos(ABC):
 
 
 class RepositorioJSON(RepositorioPedidos):
-    """Persiste la lista de pedidos en un archivo .json."""
 
     # Mapa clave-guardada -> clase concreta, usado para reconstruir
     # el objeto correcto al leer el JSON (polimorfismo al cargar datos).
@@ -70,7 +52,6 @@ class RepositorioJSON(RepositorioPedidos):
         return [self._reconstruir_pedido(item) for item in datos]
 
     def _reconstruir_pedido(self, item):
-        """Recrea el objeto Pedido concreto correcto segun el tipo guardado."""
         clase = self._MAPA_TIPOS.get(item.get('tipo'), PedidoRetiro)
 
         if clase is PedidoDelivery:

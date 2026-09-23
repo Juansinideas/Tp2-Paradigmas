@@ -1,10 +1,3 @@
-"""
-entrada_salida.py
-------------------
-Funciones auxiliares de consola. Equivalen a LeerReal() y a los distintos
-'repeat...until' de validacion del Pascal original.
-"""
-
 import os
 
 

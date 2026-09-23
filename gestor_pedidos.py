@@ -1,31 +1,14 @@
-"""
-gestor_pedidos.py
-------------------
-Logica de negocio del sistema: equivalente a los procedimientos
-CargarPedido, ConsultarPedido, ListarPedidos..., ModificarPedido y
-CancelarPedido del Pascal original, pero separados de la interfaz de
-consola (eso vive en menu.py).
-
-Pilar de POO:
-  - ENCAPSULAMIENTO: la lista interna de pedidos (_pedidos) es privada.
-    Nadie fuera de esta clase la modifica directamente; todo pasa por
-    metodos que validan y luego persisten el cambio en el repositorio.
-"""
-
 from modelos import PedidoDelivery, PedidoRetiro
 from repositorio import RepositorioJSON
 
 
 class GestorPedidos:
-    """Orquesta las operaciones sobre los pedidos y su persistencia."""
-
     def __init__(self, repositorio=None):
         self._repositorio = repositorio if repositorio is not None else RepositorioJSON()
         self._pedidos = self._repositorio.cargar_todos()
 
     @property
     def pedidos(self):
-        """Devuelve una copia para que nadie modifique la lista interna sin pasar por aca."""
         return list(self._pedidos)
 
     def _siguiente_id(self):
@@ -99,7 +82,6 @@ class GestorPedidos:
         return self._guardar()
 
     def _obtener_modificable(self, id_pedido):
-        """Devuelve el pedido solo si existe y no esta cancelado."""
         pedido = self.buscar_por_id(id_pedido)
         if pedido is None or pedido.cancelado:
             return None
